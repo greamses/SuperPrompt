@@ -343,6 +343,157 @@ section {
 }
 
 /* Category Tabs */
+/* Category Dropdown Styles */
+.category-dropdown-container {
+    position: relative;
+    display: block;
+    margin: 0 auto 3rem;
+    max-width: 300px;
+    z-index: 10;
+}
+
+.category-dropdown-btn {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: var(--white);
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: var(--transition);
+    backdrop-filter: blur(5px);
+}
+
+.category-dropdown-btn:hover {
+    border-color: var(--red);
+    background-color: rgba(206, 18, 4, 0.2);
+}
+
+.category-dropdown-btn svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+    transition: transform 0.3s ease;
+}
+
+.category-dropdown-btn.active svg {
+    transform: rotate(180deg);
+}
+
+.category-dropdown-content {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    max-height: 0;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: none;
+    backdrop-filter: blur(10px);
+    transition: max-height 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    z-index: 100;
+}
+
+.category-dropdown-content.show {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.category-tab {
+    display: block;
+    width: 100%;
+    padding: 1rem 1.5rem;
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-align: left;
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+}
+
+.category-tab:hover {
+    color: var(--white);
+    background-color: rgba(206, 18, 4, 0.2);
+}
+
+.category-tab.active {
+    color: var(--red);
+    font-weight: bold;
+    background-color: rgba(206, 18, 4, 0.1);
+}
+
+.category-tab.active::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 50%;
+    background-color: var(--red);
+}
+
+.category-dropdown-content {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    max-height: 0;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: none;
+    backdrop-filter: blur(10px);
+    transition: max-height 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 0.3s ease 0.1s,
+        visibility 0s linear 0.5s;
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+}
+
+.category-dropdown-content.show {
+    max-height: 400px;
+    opacity: 1;
+    visibility: visible;
+    transition: max-height 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 0.3s ease,
+        visibility 0s linear;
+}
+
+.category-dropdown-btn svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+    transition: transform 0.3s ease;
+}
+
+/* Scrollbar for dropdown */
+.category-dropdown-content::-webkit-scrollbar {
+    width: 4px;
+}
+
+.category-dropdown-content::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.category-dropdown-content::-webkit-scrollbar-thumb {
+    background: var(--red);
+    border-radius: 2px;
+}
+
 .category-tabs {
     display: flex;
     gap: 0.5rem;
@@ -350,51 +501,6 @@ section {
     padding: 0 10px;
     justify-content: center;
     flex-wrap: wrap;
-}
-
-.category-tab {
-    background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    color: var(--white);
-    padding: 0.75rem 1.5rem;
-    font-size: 0.85rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: var(--transition);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-family: 'Courier New', Courier, monospace;
-    position: relative;
-    overflow: hidden;
-}
-
-.category-tab::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: var(--red);
-    transition: 0.3s ease;
-    z-index: -1;
-}
-
-.category-tab:hover::before,
-.category-tab.active::before {
-    left: 0;
-}
-
-.category-tab:hover,
-.category-tab.active {
-    color: var(--white);
-    border-color: var(--red);
-    transform: translateY(-2px);
-}
-
-.category-tab.active {
-    background: var(--red);
-    border-color: var(--red);
 }
 
 .prompt-card {
@@ -472,6 +578,165 @@ section {
     width: 20px;
     height: 20px;
     stroke: currentColor;
+}
+
+/* App Recommendations Styling */
+.app-recommendations {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    position: relative;
+}
+
+.app-recommendations::before {
+    content: 'RECOMMENDED TOOLS';
+    position: absolute;
+    top: -0.6rem;
+    left: 0;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    color: var(--red);
+    background: var(--black);
+    padding: 0 0.5rem;
+    text-transform: uppercase;
+}
+
+.app-tier {
+    margin-bottom: 1.5rem;
+}
+
+.app-tier-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    font-family: 'Courier New', Courier, monospace;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.8rem;
+    color: var(--white);
+}
+
+.app-tier-header::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.2);
+    margin-left: 1rem;
+}
+
+.app-tier-free .app-tier-header {
+    color: #4CAF50; /* Green for free tier */
+}
+
+.app-tier-paid .app-tier-header {
+    color: #FF9800; /* Orange for paid tier */
+}
+
+.app-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.app-card {
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.app-card:hover {
+    background: rgba(206, 18, 4, 0.1);
+    border-color: var(--red);
+    transform: translateY(-2px);
+}
+
+.app-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    background: var(--red);
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.app-card:hover::before {
+    transform: scaleY(1);
+    transform-origin: top;
+}
+
+.app-name {
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-family: 'Space Grotesk', sans-serif;
+    letter-spacing: -0.5px;
+}
+
+.app-name a {
+    color: var(--white);
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.app-name a:hover {
+    color: var(--red);
+}
+
+.app-name svg {
+    width: 14px;
+    height: 14px;
+    margin-left: 0.5rem;
+    stroke: currentColor;
+    opacity: 0.7;
+}
+
+.app-description {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 0.5rem;
+}
+
+.app-meta {
+    display: flex;
+    align-items: center;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+    font-family: 'Courier New', Courier, monospace;
+    letter-spacing: 0.5px;
+}
+
+.app-meta span {
+    display: flex;
+    align-items: center;
+    margin-right: 1rem;
+}
+
+.app-meta svg {
+    width: 12px;
+    height: 12px;
+    margin-right: 0.3rem;
+    stroke: currentColor;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .app-list {
+        grid-template-columns: 1fr;
+    }
+    
+    .app-card {
+        padding: 1rem 0.75rem;
+    }
 }
 
 .show-more-btn {
@@ -703,22 +968,20 @@ footer .container p {
     }
 }
 
-/* Responsive Adjustments */
 @media (max-width: 768px) {
-    .search-container {
-        margin-bottom: 2rem;
+    .category-dropdown-container {
+        max-width: 100%;
+        margin: 1rem auto 2rem;
         padding: 0 1rem;
     }
     
-    .search-input {
-        padding: 0.75rem 1rem 0.75rem 2.5rem;
+    .category-dropdown-btn {
+        padding: 0.85rem 1.25rem;
+        font-size: 0.8rem;
     }
     
-    .search-icon {
-        left: 1.5rem;
-    }
-    
-    .see-more-btn {
-        font-size: 0.7rem;
+    .category-tab {
+        padding: 0.85rem 1.25rem;
+        font-size: 0.8rem;
     }
 }

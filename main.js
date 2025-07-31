@@ -5,7 +5,104 @@ const categoryNames = {
     video: "Video",
     text: "Text",
     picture: "Picture",
-    webapp: "Web Apps"
+    webapp: "Web Apps",
+    game: "Games",
+    design: "Design",
+    code: "Code",
+    storytelling: "Storytelling"
+};
+
+const appRecommendations = {
+    music: {
+        free: [
+            { name: "Suno AI", url: "https://suno.com", description: "Prompt-based AI music generation (free tier available)" },
+            { name: "Boomy", url: "https://boomy.com", description: "Generate songs using style prompts (free plan)" }
+        ],
+        paid: [
+            { name: "AIVA", url: "https://aiva.ai", description: "Compose music using mood/style prompts ($15/month)" },
+            { name: "Soundraw", url: "https://soundraw.io", description: "Prompt AI to create music loops and songs ($16.99/month)" }
+        ]
+    },
+    video: {
+        free: [
+            { name: "Pika Labs", url: "https://pika.art", description: "Generate videos from text prompts (free tier)" },
+            { name: "Leonardo AI", url: "https://leonardo.ai", description: "Prompt-based asset generation for video creation (free tier)" }
+        ],
+        paid: [
+            { name: "Runway ML", url: "https://runwayml.com", description: "Text-to-video generation via prompts ($15/user/month)" },
+            { name: "Synthesia", url: "https://synthesia.io", description: "Create AI avatar videos from text input ($30/month)" }
+        ]
+    },
+    text: {
+        free: [
+            { name: "ChatGPT", url: "https://chat.openai.com", description: "Chat-based prompt AI for writing, code, Q&A (free tier)" },
+            { name: "Claude", url: "https://claude.ai", description: "Prompt-based assistant for writing and analysis (free)" }
+        ],
+        paid: [
+            { name: "ChatGPT Plus", url: "https://chat.openai.com", description: "Access GPT-4 with better performance ($20/month)" },
+            { name: "Perplexity Pro", url: "https://perplexity.ai", description: "Prompt-powered research and writing tool ($20/month)" }
+        ]
+    },
+    picture: {
+        free: [
+            { name: "Playground AI", url: "https://playgroundai.com", description: "Prompt-based image generation with styles (free)" },
+            { name: "Craiyon", url: "https://www.craiyon.com", description: "Simple AI image generator using prompts (free)" }
+        ],
+        paid: [
+            { name: "Midjourney", url: "https://midjourney.com", description: "High-quality art via prompt input (starts at $10/month)" },
+            { name: "Adobe Firefly", url: "https://firefly.adobe.com", description: "Prompt-based design and image tools (Adobe plan)" }
+        ]
+    },
+    webapp: {
+        free: [
+            { name: "Builder.io", url: "https://www.builder.io", description: "Prompt-based site/app creation using AI (free tier)" },
+            { name: "Vercel v0", url: "https://v0.dev", description: "Generate full UIs from prompts (experimental, free)" }
+        ],
+        paid: [
+            { name: "TeleportHQ", url: "https://teleporthq.io", description: "AI-generated UIs from descriptions (paid features)" },
+            { name: "Durable", url: "https://durable.co", description: "Build full business websites from one prompt ($12/month+)" }
+        ]
+    },
+    game: {
+        free: [
+            { name: "Scenario.gg", url: "https://scenario.gg", description: "Generate game assets using text prompts (free tier)" },
+            { name: "Leonardo AI", url: "https://leonardo.ai", description: "Prompt-based game art generation (free tier)" }
+        ],
+        paid: [
+            { name: "Ludo.ai", url: "https://ludo.ai", description: "AI game ideation via prompts and analytics ($20/month)" },
+            { name: "Promethean AI", url: "https://www.prometheanai.com", description: "Prompt-based environment creation (studio-level tool)" }
+        ]
+    },
+    design: {
+        free: [
+            { name: "Designify", url: "https://www.designify.com", description: "Prompt-style image enhancement (free basic plan)" },
+            { name: "Uizard", url: "https://uizard.io", description: "Generate UI designs from text descriptions (free tier)" }
+        ],
+        paid: [
+            { name: "Visily", url: "https://www.visily.ai", description: "Prompt-based wireframes & UI mockups (paid features)" },
+            { name: "Galileo AI", url: "https://www.usegalileo.ai", description: "Design full interfaces from prompts (waitlist or paid)" }
+        ]
+    },
+    code: {
+        free: [
+            { name: "Codeium", url: "https://codeium.com", description: "Prompt-based code assistant (free for individuals)" },
+            { name: "Replit Ghostwriter", url: "https://replit.com", description: "AI prompts to generate/complete code (free tier)" }
+        ],
+        paid: [
+            { name: "GitHub Copilot", url: "https://github.com/features/copilot", description: "AI code completion via prompts ($10/month)" },
+            { name: "AskCodi", url: "https://www.askcodi.com", description: "Prompt-based code & documentation generator (paid)" }
+        ]
+    },
+    storytelling: {
+        free: [
+            { name: "StoryBird AI", url: "https://www.storybird.ai", description: "Generate illustrated stories from prompts (free tier)" },
+            { name: "NovelAI", url: "https://novelai.net", description: "Prompt-based story writer (limited free trial)" }
+        ],
+        paid: [
+            { name: "Sudowrite", url: "https://www.sudowrite.com", description: "Creative story generation using prompts ($10+/month)" },
+            { name: "Plot Factory", url: "https://www.plotfactory.com", description: "AI-powered novel writing and worldbuilding (paid)" }
+        ]
+    }
 };
 
 const typingPhrases = [
@@ -19,10 +116,10 @@ const typingPhrases = [
 let activeCategory = 'text';
 let showingAllPrompts = {};
 let currentSearchTerm = '';
-let visiblePromptsCount = {}; 
+let visiblePromptsCount = {};
 let searchTimeout = null;
-const PROMPTS_INCREMENT = 3; 
-const MAX_PROMPT_LENGTH = 200; 
+const PROMPTS_INCREMENT = 3;
+const MAX_PROMPT_LENGTH = 200;
 
 Object.keys(promptCategories).forEach(category => {
     showingAllPrompts[category] = false;
@@ -54,8 +151,6 @@ const searchIcon = `
         `;
 
 let heroHeight = heroSection.offsetHeight
-
-console.log(heroHeight)
 
 document.querySelector('.prompts-section').style.marginTop = `${heroHeight}px`
 
@@ -178,7 +273,21 @@ function isInViewport(element) {
 
 function createCategoryTabs() {
     const tabsContainer = document.createElement('div');
-    tabsContainer.className = 'category-tabs';
+    tabsContainer.className = 'category-dropdown-container';
+    
+    // Create the dropdown button
+    const dropdownBtn = document.createElement('button');
+    dropdownBtn.className = 'category-dropdown-btn';
+    dropdownBtn.innerHTML = `
+        ${categoryNames[activeCategory]}
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+        </svg>
+    `;
+    
+    // Create the dropdown content
+    const dropdownContent = document.createElement('div');
+    dropdownContent.className = 'category-dropdown-content';
     
     Object.keys(promptCategories).forEach(category => {
         const tab = document.createElement('button');
@@ -188,10 +297,45 @@ function createCategoryTabs() {
         
         tab.addEventListener('click', () => {
             switchCategory(category);
+            // Start closing animation
+            dropdownContent.classList.remove('show');
+            dropdownBtn.classList.remove('active');
         });
         
-        tabsContainer.appendChild(tab);
+        dropdownContent.appendChild(tab);
     });
+    
+    // Toggle dropdown on button click
+    dropdownBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpening = !dropdownContent.classList.contains('show');
+        
+        if (isOpening) {
+            dropdownBtn.classList.add('active');
+            dropdownContent.classList.add('show');
+        } else {
+            dropdownBtn.classList.remove('active');
+            dropdownContent.classList.remove('show');
+        }
+    });
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!tabsContainer.contains(e.target)) {
+            dropdownBtn.classList.remove('active');
+            dropdownContent.classList.remove('show');
+        }
+    });
+    
+    // Handle transition end to reset overflow
+    dropdownContent.addEventListener('transitionend', (e) => {
+        if (e.propertyName === 'max-height' && !dropdownContent.classList.contains('show')) {
+            dropdownContent.style.overflow = 'hidden';
+        }
+    });
+    
+    tabsContainer.appendChild(dropdownBtn);
+    tabsContainer.appendChild(dropdownContent);
     
     return tabsContainer;
 }
@@ -200,14 +344,27 @@ function switchCategory(category) {
     if (category === activeCategory) return;
     
     currentSearchTerm = '';
-    
     activeCategory = category;
     
+    // Update dropdown button text
+    const dropdownBtn = document.querySelector('.category-dropdown-btn');
+    if (dropdownBtn) {
+        dropdownBtn.innerHTML = `
+            ${categoryNames[category]}
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+            </svg>
+        `;
+    }
+    
+    // Update active state in dropdown items
     document.querySelectorAll('.category-tab').forEach(tab => {
         tab.classList.toggle('active', tab.getAttribute('data-category') === category);
     });
     
-
+    // Reset visible prompts count for the new category
+    visiblePromptsCount[activeCategory] = PROMPTS_INCREMENT;
+    
     renderPrompts();
 }
 
@@ -231,7 +388,8 @@ function renderPrompts() {
     }
     
     if (currentSearchTerm) {
-        visiblePromptsCount[activeCategory] = filteredPrompts.length;  }
+        visiblePromptsCount[activeCategory] = filteredPrompts.length;
+    }
     
     const promptsToShow = filteredPrompts.slice(0, visiblePromptsCount[activeCategory]);
     
@@ -255,7 +413,7 @@ function renderPrompts() {
             visiblePromptsCount[activeCategory] += PROMPTS_INCREMENT;
             renderPrompts();
             
-
+            
             setTimeout(() => {
                 showMoreBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }, 100);
@@ -266,12 +424,8 @@ function renderPrompts() {
 }
 
 function copyPrompt(id) {
-    // Find prompt in all categories
-    let prompt = null;
-    for (const category of Object.values(promptCategories)) {
-        prompt = category.find(p => p.id == id);
-        if (prompt) break;
-    }
+    // Find prompt in the active category
+    const prompt = promptCategories[activeCategory].find(p => p.id == id);
     
     if (!prompt) return;
     
@@ -279,6 +433,14 @@ function copyPrompt(id) {
         showNotification();
     }).catch(err => {
         console.error('Failed to copy: ', err);
+        // Fallback for browsers that don't support clipboard API
+        const textarea = document.createElement('textarea');
+        textarea.value = prompt.content;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        showNotification();
     });
 }
 
@@ -323,35 +485,109 @@ function createPromptCard(prompt) {
                 ${copyIcon}
             </button>
         </div>
-        <div class="prompt-content" data-full-content="${prompt.content}">
-            <div class="content-text">${truncatedContent}</div>
+        <div class="prompt-content">
+            <div class="content-text">${formatPromptContent(truncatedContent)}</div>
             ${isLongContent ? '<button class="see-more-btn">See More</button>' : ''}
         </div>
     `;
     
-    // Add copy functionality
     card.querySelector('.copy-btn').addEventListener('click', (e) => {
+        e.stopPropagation(); // Prevent event bubbling
         const promptId = e.currentTarget.getAttribute('data-id');
         copyPrompt(promptId);
     });
     
-    // Add see more functionality
     if (isLongContent) {
         const seeMoreBtn = card.querySelector('.see-more-btn');
         const contentText = card.querySelector('.content-text');
         let isExpanded = false;
         
-        seeMoreBtn.addEventListener('click', () => {
+        seeMoreBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent event bubbling
             if (isExpanded) {
-                contentText.textContent = truncatedContent;
+                contentText.innerHTML = formatPromptContent(truncatedContent);
                 seeMoreBtn.textContent = 'See More';
-                isExpanded = false;
             } else {
-                contentText.textContent = prompt.content;
+                contentText.innerHTML = formatPromptContent(prompt.content);
                 seeMoreBtn.textContent = 'See Less';
-                isExpanded = true;
             }
+            isExpanded = !isExpanded;
         });
+    }
+    const recommendations = appRecommendations[activeCategory];
+    if (recommendations) {
+        const appsHTML = `
+            <div class="app-recommendations">
+                <div class="app-tier app-tier-free">
+                    <div class="app-tier-header">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                        <span>Free Options</span>
+                    </div>
+                    <div class="app-list">
+                        ${recommendations.free.map(app => `
+                            <div class="app-card">
+                                <div class="app-name">
+                                    <a href="${app.url}" target="_blank">${app.name}</a>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                        <polyline points="15 3 21 3 21 9"></polyline>
+                                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                                    </svg>
+                                </div>
+                                <div class="app-description">${app.description}</div>
+                                <div class="app-meta">
+                                    <span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <path d="M12 8v4l3 3"></path>
+                                        </svg>
+                                        Free Plan
+                                    </span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                <div class="app-tier app-tier-paid">
+                    <div class="app-tier-header">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                        </svg>
+                        <span>Premium Options</span>
+                    </div>
+                    <div class="app-list">
+                        ${recommendations.paid.map(app => `
+                            <div class="app-card">
+                                <div class="app-name">
+                                    <a href="${app.url}" target="_blank">${app.name}</a>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                        <polyline points="15 3 21 3 21 9"></polyline>
+                                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                                    </svg>
+                                </div>
+                                <div class="app-description">${app.description}</div>
+                                <div class="app-meta">
+                                    <span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                            <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                                            <path d="M2 10h20M7 14h1m4 0h1m4 0h1"></path>
+                                        </svg>
+                                        Paid Service
+                                    </span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+        const appsWrapper = document.createElement('div');
+        appsWrapper.innerHTML = appsHTML;
+        promptsContainer.appendChild(appsWrapper);
     }
     
     return card;
@@ -386,15 +622,15 @@ function createSearchBar() {
     searchContainer.appendChild(searchInput);
     
     const performSearch = () => {
-    const newSearchTerm = searchInput.value.trim();
-    if (newSearchTerm !== currentSearchTerm) {
-        currentSearchTerm = newSearchTerm.toLowerCase();
-        if (!currentSearchTerm) {
-            visiblePromptsCount[activeCategory] = PROMPTS_INCREMENT;
+        const newSearchTerm = searchInput.value.trim();
+        if (newSearchTerm !== currentSearchTerm) {
+            currentSearchTerm = newSearchTerm.toLowerCase();
+            if (!currentSearchTerm) {
+                visiblePromptsCount[activeCategory] = PROMPTS_INCREMENT;
+            }
+            renderPrompts();
         }
-        renderPrompts();
-    }
-};
+    };
     
     searchIconElement.addEventListener('click', performSearch);
     
@@ -438,4 +674,3 @@ function init() {
 }
 
 init()
-
