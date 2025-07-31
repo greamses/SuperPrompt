@@ -140,34 +140,39 @@ function updateHeaderContrast(section) {
     }
 }
 
-function typeWriter(text, element, speed = 100, callback) {
+function typeWriter(text, element, baseSpeed = 80, callback) {
     let i = 0;
-    element.textContent = '';
     
-    function typing() {
+    function typeChar() {
         if (i < text.length) {
             element.textContent += text.charAt(i);
             i++;
-            setTimeout(typing, speed);
+            const naturalDelay = baseSpeed + Math.random() * 60; 
+            setTimeout(typeChar, naturalDelay);
         } else if (callback) {
-            setTimeout(callback, 1000);
+            callback();
         }
     }
     
-    typing();
+    element.textContent = ''; 
+    typeChar();
 }
 
-function backspaceText(element, speed = 50, callback) {
-    function backspacing() {
-        if (element.textContent.length > 0) {
-            element.textContent = element.textContent.substring(0, element.textContent.length - 1);
-            setTimeout(backspacing, speed);
+function backspaceText(element, baseSpeed = 50, callback) {
+    const text = element.textContent;
+    let i = text.length;
+    
+    function eraseChar() {
+        if (i > 0) {
+            element.textContent = text.slice(0, --i);
+            const naturalDelay = baseSpeed + Math.random() * 60;
+            setTimeout(eraseChar, naturalDelay);
         } else if (callback) {
-            setTimeout(callback, 500);
+            callback();
         }
     }
     
-    backspacing();
+    eraseChar();
 }
 
 function cycleTypingPhrases() {
@@ -186,8 +191,6 @@ function cycleTypingPhrases() {
     
     typeNextPhrase();
 }
-
-
 
 function isInViewport(element) {
     const rect = element.getBoundingClientRect();
