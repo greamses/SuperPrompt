@@ -423,7 +423,6 @@ function createPromptCard(prompt) {
         </div>
     `;
     
-    // Improved event delegation for copy button
     card.addEventListener('click', (e) => {
         const copyBtn = e.target.closest('.copy-btn');
         if (copyBtn) {
@@ -451,12 +450,89 @@ function createPromptCard(prompt) {
         }
     });
     
+    // Add premium app recommendations section
+    const recommendations = appRecommendations[activeCategory];
+    if (recommendations) {
+        const appsHTML = `
+            <div class="app-recommendations">
+                <div class="app-tier app-tier-free">
+                    <div class="app-tier-header">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                        <span>Free Options</span>
+                    </div>
+                    <div class="app-list">
+                        ${recommendations.free.map(app => `
+                            <div class="app-card">
+                                <div class="app-name">
+                                    <a href="${app.url}" target="_blank">${app.name}</a>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                        <polyline points="15 3 21 3 21 9"></polyline>
+                                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                                    </svg>
+                                </div>
+                                <div class="app-description">${app.description}</div>
+                                <div class="app-meta">
+                                    <span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <path d="M12 8v4l3 3"></path>
+                                        </svg>
+                                        Free Plan
+                                    </span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                <div class="app-tier app-tier-paid">
+                    <div class="app-tier-header">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                        </svg>
+                        <span>Premium Options</span>
+                    </div>
+                    <div class="app-list">
+                        ${recommendations.paid.map(app => `
+                            <div class="app-card">
+                                <div class="app-name">
+                                    <a href="${app.url}" target="_blank">${app.name}</a>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                        <polyline points="15 3 21 3 21 9"></polyline>
+                                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                                    </svg>
+                                </div>
+                                <div class="app-description">${app.description}</div>
+                                <div class="app-meta">
+                                    <span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                            <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                                            <path d="M2 10h20M7 14h1m4 0h1m4 0h1"></path>
+                                        </svg>
+                                        Paid Service
+                                    </span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+        const appsWrapper = document.createElement('div');
+        appsWrapper.innerHTML = appsHTML;
+        card.appendChild(appsWrapper);
+    }
+    
     return card;
 }
 
 function createCategoryTabs() {
     const tabsContainer = document.createElement('div');
-tabsContainer.className = 'category-dropdown-container';
+    tabsContainer.className = 'category-dropdown-container';
     
     // Create the dropdown button
     const dropdownBtn = document.createElement('button');
@@ -665,4 +741,3 @@ function renderPrompts() {
 }
 
 init()
-
