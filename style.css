@@ -936,19 +936,6 @@ footer .container p {
     transform: translateX(-50%) translateY(0);
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .category-tabs {
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    .category-tab {
-        width: 100%;
-        max-width: 200px;
-        text-align: center;
-    }
-}
 
 @media (min-width: 768px) {
     .prompts-container {
@@ -971,7 +958,7 @@ footer .container p {
 @media (max-width: 768px) {
     .category-dropdown-container {
         max-width: 100%;
-        margin: 1rem auto 2rem;
+        margin: 1rem auto 0.2rem;
         padding: 0 1rem;
     }
     

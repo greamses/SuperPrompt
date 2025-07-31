@@ -114,6 +114,7 @@ const typingPhrases = [
 ];
 
 let activeCategory = 'text';
+let scrollPos = 0;
 let showingAllPrompts = {};
 let currentSearchTerm = '';
 let visiblePromptsCount = {};
@@ -271,158 +272,6 @@ function isInViewport(element) {
     );
 }
 
-function createCategoryTabs() {
-    const tabsContainer = document.createElement('div');
-    tabsContainer.className = 'category-dropdown-container';
-    
-    // Create the dropdown button
-    const dropdownBtn = document.createElement('button');
-    dropdownBtn.className = 'category-dropdown-btn';
-    dropdownBtn.innerHTML = `
-        ${categoryNames[activeCategory]}
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-        </svg>
-    `;
-    
-    // Create the dropdown content
-    const dropdownContent = document.createElement('div');
-    dropdownContent.className = 'category-dropdown-content';
-    
-    Object.keys(promptCategories).forEach(category => {
-        const tab = document.createElement('button');
-        tab.className = `category-tab ${category === activeCategory ? 'active' : ''}`;
-        tab.textContent = categoryNames[category];
-        tab.setAttribute('data-category', category);
-        
-        tab.addEventListener('click', () => {
-            switchCategory(category);
-            // Start closing animation
-            dropdownContent.classList.remove('show');
-            dropdownBtn.classList.remove('active');
-        });
-        
-        dropdownContent.appendChild(tab);
-    });
-    
-    // Toggle dropdown on button click
-    dropdownBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const isOpening = !dropdownContent.classList.contains('show');
-        
-        if (isOpening) {
-            dropdownBtn.classList.add('active');
-            dropdownContent.classList.add('show');
-        } else {
-            dropdownBtn.classList.remove('active');
-            dropdownContent.classList.remove('show');
-        }
-    });
-    
-    // Close dropdown when clicking outside
-    document.addEventListener('click', (e) => {
-        if (!tabsContainer.contains(e.target)) {
-            dropdownBtn.classList.remove('active');
-            dropdownContent.classList.remove('show');
-        }
-    });
-    
-    // Handle transition end to reset overflow
-    dropdownContent.addEventListener('transitionend', (e) => {
-        if (e.propertyName === 'max-height' && !dropdownContent.classList.contains('show')) {
-            dropdownContent.style.overflow = 'hidden';
-        }
-    });
-    
-    tabsContainer.appendChild(dropdownBtn);
-    tabsContainer.appendChild(dropdownContent);
-    
-    return tabsContainer;
-}
-
-function switchCategory(category) {
-    if (category === activeCategory) return;
-    
-    currentSearchTerm = '';
-    activeCategory = category;
-    
-    // Update dropdown button text
-    const dropdownBtn = document.querySelector('.category-dropdown-btn');
-    if (dropdownBtn) {
-        dropdownBtn.innerHTML = `
-            ${categoryNames[category]}
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-            </svg>
-        `;
-    }
-    
-    // Update active state in dropdown items
-    document.querySelectorAll('.category-tab').forEach(tab => {
-        tab.classList.toggle('active', tab.getAttribute('data-category') === category);
-    });
-    
-    // Reset visible prompts count for the new category
-    visiblePromptsCount[activeCategory] = PROMPTS_INCREMENT;
-    
-    renderPrompts();
-}
-
-function renderPrompts() {
-    promptsContainer.innerHTML = '';
-    
-    const searchBar = createSearchBar();
-    promptsContainer.appendChild(searchBar);
-    
-    const tabsContainer = createCategoryTabs();
-    promptsContainer.appendChild(tabsContainer);
-    
-    const filteredPrompts = filterPrompts();
-    
-    if (filteredPrompts.length === 0) {
-        const noResults = document.createElement('div');
-        noResults.className = 'no-results';
-        noResults.textContent = 'No prompts found matching your search.';
-        promptsContainer.appendChild(noResults);
-        return;
-    }
-    
-    if (currentSearchTerm) {
-        visiblePromptsCount[activeCategory] = filteredPrompts.length;
-    }
-    
-    const promptsToShow = filteredPrompts.slice(0, visiblePromptsCount[activeCategory]);
-    
-    promptsToShow.forEach((prompt, index) => {
-        const card = createPromptCard(prompt);
-        promptsContainer.appendChild(card);
-        
-        setTimeout(() => {
-            card.classList.add('visible');
-        }, index * 100);
-    });
-    
-    if (!currentSearchTerm && visiblePromptsCount[activeCategory] < filteredPrompts.length) {
-        const showMoreBtn = document.createElement('button');
-        showMoreBtn.className = 'show-more-btn';
-        const remainingCount = filteredPrompts.length - visiblePromptsCount[activeCategory];
-        const showCount = Math.min(PROMPTS_INCREMENT, remainingCount);
-        showMoreBtn.textContent = `Show ${showCount} More Prompt${showCount !== 1 ? 's' : ''}`;
-        
-        showMoreBtn.addEventListener('click', () => {
-            visiblePromptsCount[activeCategory] += PROMPTS_INCREMENT;
-            renderPrompts();
-            
-            
-            setTimeout(() => {
-                showMoreBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }, 100);
-        });
-        
-        promptsContainer.appendChild(showMoreBtn);
-    }
-}
-
 function copyPrompt(id) {
     // Find prompt in the active category
     const prompt = promptCategories[activeCategory].find(p => p.id == id);
@@ -470,129 +319,6 @@ function buildThresholdList() {
     return thresholds;
 }
 
-function createPromptCard(prompt) {
-    const card = document.createElement('div');
-    card.className = 'prompt-card';
-    card.setAttribute('data-id', prompt.id);
-    
-    const isLongContent = prompt.content.length > MAX_PROMPT_LENGTH;
-    const truncatedContent = isLongContent ? truncateText(prompt.content, MAX_PROMPT_LENGTH) : prompt.content;
-    
-    card.innerHTML = `
-        <div class="prompt-title">
-            ${prompt.title}
-            <button class="copy-btn" aria-label="Copy prompt" data-id="${prompt.id}">
-                ${copyIcon}
-            </button>
-        </div>
-        <div class="prompt-content">
-            <div class="content-text">${formatPromptContent(truncatedContent)}</div>
-            ${isLongContent ? '<button class="see-more-btn">See More</button>' : ''}
-        </div>
-    `;
-    
-    card.querySelector('.copy-btn').addEventListener('click', (e) => {
-        e.stopPropagation(); // Prevent event bubbling
-        const promptId = e.currentTarget.getAttribute('data-id');
-        copyPrompt(promptId);
-    });
-    
-    if (isLongContent) {
-        const seeMoreBtn = card.querySelector('.see-more-btn');
-        const contentText = card.querySelector('.content-text');
-        let isExpanded = false;
-        
-        seeMoreBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); // Prevent event bubbling
-            if (isExpanded) {
-                contentText.innerHTML = formatPromptContent(truncatedContent);
-                seeMoreBtn.textContent = 'See More';
-            } else {
-                contentText.innerHTML = formatPromptContent(prompt.content);
-                seeMoreBtn.textContent = 'See Less';
-            }
-            isExpanded = !isExpanded;
-        });
-    }
-    const recommendations = appRecommendations[activeCategory];
-    if (recommendations) {
-        const appsHTML = `
-            <div class="app-recommendations">
-                <div class="app-tier app-tier-free">
-                    <div class="app-tier-header">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                        </svg>
-                        <span>Free Options</span>
-                    </div>
-                    <div class="app-list">
-                        ${recommendations.free.map(app => `
-                            <div class="app-card">
-                                <div class="app-name">
-                                    <a href="${app.url}" target="_blank">${app.name}</a>
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                                        <polyline points="15 3 21 3 21 9"></polyline>
-                                        <line x1="10" y1="14" x2="21" y2="3"></line>
-                                    </svg>
-                                </div>
-                                <div class="app-description">${app.description}</div>
-                                <div class="app-meta">
-                                    <span>
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                            <circle cx="12" cy="12" r="10"></circle>
-                                            <path d="M12 8v4l3 3"></path>
-                                        </svg>
-                                        Free Plan
-                                    </span>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-                <div class="app-tier app-tier-paid">
-                    <div class="app-tier-header">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
-                        </svg>
-                        <span>Premium Options</span>
-                    </div>
-                    <div class="app-list">
-                        ${recommendations.paid.map(app => `
-                            <div class="app-card">
-                                <div class="app-name">
-                                    <a href="${app.url}" target="_blank">${app.name}</a>
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                                        <polyline points="15 3 21 3 21 9"></polyline>
-                                        <line x1="10" y1="14" x2="21" y2="3"></line>
-                                    </svg>
-                                </div>
-                                <div class="app-description">${app.description}</div>
-                                <div class="app-meta">
-                                    <span>
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                            <rect x="2" y="4" width="20" height="16" rx="2"></rect>
-                                            <path d="M2 10h20M7 14h1m4 0h1m4 0h1"></path>
-                                        </svg>
-                                        Paid Service
-                                    </span>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            </div>
-        `;
-        const appsWrapper = document.createElement('div');
-        appsWrapper.innerHTML = appsHTML;
-        promptsContainer.appendChild(appsWrapper);
-    }
-    
-    return card;
-}
-
 function handleScrollAnimations() {
     const cards = document.querySelectorAll('.prompt-card, .feature-card');
     
@@ -601,48 +327,6 @@ function handleScrollAnimations() {
             card.classList.add('visible');
         }
     });
-}
-
-function createSearchBar() {
-    const searchContainer = document.createElement('div');
-    searchContainer.className = 'search-container';
-    
-    const searchInput = document.createElement('input');
-    searchInput.type = 'text';
-    searchInput.placeholder = 'Search prompts...';
-    searchInput.className = 'search-input';
-    searchInput.value = currentSearchTerm;
-    
-    const searchIconElement = document.createElement('button');
-    searchIconElement.className = 'search-icon';
-    searchIconElement.innerHTML = searchIcon;
-    searchIconElement.setAttribute('aria-label', 'Search');
-    
-    searchContainer.appendChild(searchIconElement);
-    searchContainer.appendChild(searchInput);
-    
-    const performSearch = () => {
-        const newSearchTerm = searchInput.value.trim();
-        if (newSearchTerm !== currentSearchTerm) {
-            currentSearchTerm = newSearchTerm.toLowerCase();
-            if (!currentSearchTerm) {
-                visiblePromptsCount[activeCategory] = PROMPTS_INCREMENT;
-            }
-            renderPrompts();
-        }
-    };
-    
-    searchIconElement.addEventListener('click', performSearch);
-    
-    searchInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            performSearch();
-        }
-    });
-    
-    searchInput.addEventListener('blur', performSearch);
-    
-    return searchContainer;
 }
 
 function filterPrompts() {
@@ -673,4 +357,312 @@ function init() {
     document.querySelector('section').classList.add('active');
 }
 
+function switchCategory(category) {
+    if (category === activeCategory) return;
+    
+    currentSearchTerm = '';
+    activeCategory = category;
+    
+    // Add transition class to prompts container
+    promptsContainer.classList.add('transitioning');
+    
+    // Update dropdown button text
+    const dropdownBtn = document.querySelector('.category-dropdown-btn');
+    if (dropdownBtn) {
+        dropdownBtn.innerHTML = `
+            ${categoryNames[category]}
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+            </svg>
+        `;
+    }
+    
+    // Update active state in dropdown items
+    document.querySelectorAll('.category-tab').forEach(tab => {
+        tab.classList.toggle('active', tab.getAttribute('data-category') === category);
+    });
+    
+    // Reset visible prompts count for the new category
+    visiblePromptsCount[activeCategory] = PROMPTS_INCREMENT;
+    
+    // Close dropdown if open
+    const dropdownContent = document.querySelector('.category-dropdown-content');
+    if (dropdownContent) {
+        dropdownContent.classList.remove('show');
+        dropdownBtn.classList.remove('active');
+    }
+    
+    // Wait for transition out to complete before rendering new prompts
+    setTimeout(() => {
+        renderPrompts();
+        promptsContainer.classList.remove('transitioning');
+        
+        // Scroll to top of prompts section smoothly
+        promptsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 300);
+}
+
+function createPromptCard(prompt) {
+    const card = document.createElement('div');
+    card.className = 'prompt-card';
+    card.setAttribute('data-id', prompt.id);
+    
+    const isLongContent = prompt.content.length > MAX_PROMPT_LENGTH;
+    const truncatedContent = isLongContent ? truncateText(prompt.content, MAX_PROMPT_LENGTH) : prompt.content;
+    
+    card.innerHTML = `
+        <div class="prompt-title">
+            ${prompt.title}
+            <button class="copy-btn" aria-label="Copy prompt" data-id="${prompt.id}">
+                ${copyIcon}
+            </button>
+        </div>
+        <div class="prompt-content">
+            <div class="content-text">${formatPromptContent(truncatedContent)}</div>
+            ${isLongContent ? '<button class="see-more-btn">See More</button>' : ''}
+        </div>
+    `;
+    
+    // Improved event delegation for copy button
+    card.addEventListener('click', (e) => {
+        const copyBtn = e.target.closest('.copy-btn');
+        if (copyBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            const promptId = copyBtn.getAttribute('data-id');
+            copyPrompt(promptId);
+            return;
+        }
+        
+        const seeMoreBtn = e.target.closest('.see-more-btn');
+        if (seeMoreBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            const contentText = card.querySelector('.content-text');
+            const isExpanded = seeMoreBtn.textContent === 'See Less';
+            
+            if (isExpanded) {
+                contentText.innerHTML = formatPromptContent(truncatedContent);
+                seeMoreBtn.textContent = 'See More';
+            } else {
+                contentText.innerHTML = formatPromptContent(prompt.content);
+                seeMoreBtn.textContent = 'See Less';
+            }
+        }
+    });
+    
+    return card;
+}
+
+function createCategoryTabs() {
+    const tabsContainer = document.createElement('div');
+tabsContainer.className = 'category-dropdown-container';
+    
+    // Create the dropdown button
+    const dropdownBtn = document.createElement('button');
+    dropdownBtn.className = 'category-dropdown-btn';
+    dropdownBtn.innerHTML = `
+        ${categoryNames[activeCategory]}
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+        </svg>
+    `;
+    
+    // Create the dropdown content
+    const dropdownContent = document.createElement('div');
+    dropdownContent.className = 'category-dropdown-content';
+    
+    Object.keys(promptCategories).forEach(category => {
+        const tab = document.createElement('button');
+        tab.className = `category-tab ${category === activeCategory ? 'active' : ''}`;
+        tab.textContent = categoryNames[category];
+        tab.setAttribute('data-category', category);
+        
+        tab.addEventListener('click', (e) => {
+            e.stopPropagation();
+            switchCategory(category);
+        });
+        
+        dropdownContent.appendChild(tab);
+    });
+    
+    // Improved dropdown toggle with animation
+    dropdownBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpening = !dropdownContent.classList.contains('show');
+        
+        // Close any other open dropdowns
+        document.querySelectorAll('.category-dropdown-content.show').forEach(dropdown => {
+            if (dropdown !== dropdownContent) {
+                dropdown.classList.remove('show');
+                dropdown.previousElementSibling.classList.remove('active');
+            }
+        });
+        
+        if (isOpening) {
+            dropdownBtn.classList.add('active');
+            dropdownContent.style.overflow = 'hidden';
+            dropdownContent.classList.add('show');
+            
+            // Force reflow to enable transition
+            void dropdownContent.offsetHeight;
+            dropdownContent.style.overflow = 'visible';
+        } else {
+            dropdownBtn.classList.remove('active');
+            dropdownContent.classList.remove('show');
+        }
+    });
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!tabsContainer.contains(e.target)) {
+            dropdownBtn.classList.remove('active');
+            dropdownContent.classList.remove('show');
+        }
+    });
+    
+    tabsContainer.appendChild(dropdownBtn);
+    tabsContainer.appendChild(dropdownContent);
+    
+    return tabsContainer;
+}
+
+function createSearchBar() {
+    const searchContainer = document.createElement('div');
+    searchContainer.className = 'search-container';
+    
+    const searchInput = document.createElement('input');
+    searchInput.type = 'text';
+    searchInput.placeholder = 'Search prompts...';
+    searchInput.className = 'search-input';
+    searchInput.value = currentSearchTerm;
+    
+    const searchIconElement = document.createElement('button');
+    searchIconElement.className = 'search-icon';
+    searchIconElement.innerHTML = searchIcon;
+    searchIconElement.setAttribute('aria-label', 'Search');
+    
+    searchContainer.appendChild(searchIconElement);
+    searchContainer.appendChild(searchInput);
+    
+    const performSearch = () => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            const newSearchTerm = searchInput.value.trim();
+            if (newSearchTerm !== currentSearchTerm) {
+                currentSearchTerm = newSearchTerm.toLowerCase();
+                if (!currentSearchTerm) {
+                    visiblePromptsCount[activeCategory] = PROMPTS_INCREMENT;
+                }
+                renderPrompts();
+            }
+        }, 300);
+    };
+    
+    searchIconElement.addEventListener('click', (e) => {
+        e.preventDefault();
+        performSearch();
+        searchInput.focus();
+    });
+    
+    searchInput.addEventListener('input', performSearch);
+    searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            performSearch();
+        }
+    });
+    
+    return searchContainer;
+}
+
+function renderPrompts() {
+    promptsContainer.innerHTML = '';
+    
+    const searchBar = createSearchBar();
+    promptsContainer.appendChild(searchBar);
+    
+    const centerWrapper = document.createElement('div');
+    centerWrapper.style.display = 'flex';
+    centerWrapper.style.justifyContent = 'center';
+    centerWrapper.style.width = '100%';
+    
+    const tabsContainer = createCategoryTabs();
+    centerWrapper.appendChild(tabsContainer);
+    promptsContainer.appendChild(centerWrapper);
+    
+    // Wait for next frame to ensure transition starts
+    requestAnimationFrame(() => {
+        promptsContainer.innerHTML = '';
+        
+        const searchBar = createSearchBar();
+        promptsContainer.appendChild(searchBar);
+        
+        const tabsContainer = createCategoryTabs();
+        promptsContainer.appendChild(tabsContainer);
+        
+        const filteredPrompts = filterPrompts();
+        
+        if (filteredPrompts.length === 0) {
+            const noResults = document.createElement('div');
+            noResults.className = 'no-results';
+            noResults.textContent = 'No prompts found matching your search.';
+            promptsContainer.appendChild(noResults);
+            
+            // Remove transition class after render
+            setTimeout(() => promptsContainer.classList.remove('content-transition'), 50);
+            return;
+        }
+        
+        if (currentSearchTerm) {
+            visiblePromptsCount[activeCategory] = filteredPrompts.length;
+        }
+        
+        const promptsToShow = filteredPrompts.slice(0, visiblePromptsCount[activeCategory]);
+        
+        // Create fragment for better performance
+        const fragment = document.createDocumentFragment();
+        
+        promptsToShow.forEach((prompt, index) => {
+            const card = createPromptCard(prompt);
+            fragment.appendChild(card);
+        });
+        
+        promptsContainer.appendChild(fragment);
+        
+        if (!currentSearchTerm && visiblePromptsCount[activeCategory] < filteredPrompts.length) {
+            const showMoreBtn = document.createElement('button');
+            showMoreBtn.className = 'show-more-btn';
+            const remainingCount = filteredPrompts.length - visiblePromptsCount[activeCategory];
+            const showCount = Math.min(PROMPTS_INCREMENT, remainingCount);
+            showMoreBtn.textContent = `Show ${showCount} More Prompt${showCount !== 1 ? 's' : ''}`;
+            
+            showMoreBtn.addEventListener('click', () => {
+                visiblePromptsCount[activeCategory] += PROMPTS_INCREMENT;
+                renderPrompts();
+            });
+            
+            promptsContainer.appendChild(showMoreBtn);
+        }
+        
+        // Remove transition class after render
+        setTimeout(() => {
+            promptsContainer.classList.remove('content-transition');
+            // Restore scroll position if we're not at top
+            if (scrollPos > 0) {
+                window.scrollTo({ top: scrollPos });
+            }
+        }, 50);
+        
+        // Animate cards in sequentially
+        setTimeout(() => {
+            document.querySelectorAll('.prompt-card').forEach((card, i) => {
+                setTimeout(() => {
+                    card.classList.add('visible');
+                }, i * 100);
+            });
+        }, 100);
+    });
+}
+
 init()
+
