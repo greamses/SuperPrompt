@@ -99,9 +99,7 @@ section {
     right: 50px;
     letter-spacing: 5px;
     font-family: 'Courier New', Courier, monospace;
-    
     font-size: .7rem;
-    
 }
 
 .hero {
@@ -127,12 +125,10 @@ section {
 }
 
 .hero h2 {
-    
     font-size: clamp(3rem, 7vw, 4.5rem);
     font-weight: 700;
     position: relative;
     color: var(--red);
-    
 }
 
 .hero img {
@@ -166,12 +162,10 @@ section {
 }
 
 @keyframes blink {
-    
     0%,
     100% {
         opacity: 1;
     }
-    
     50% {
         opacity: 0;
     }
@@ -237,6 +231,61 @@ section {
     scroll-behavior: smooth;
 }
 
+/* Category Tabs */
+.category-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    padding: 0 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.category-tab {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: var(--white);
+    padding: 0.75rem 1.5rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: 'Courier New', Courier, monospace;
+    position: relative;
+    overflow: hidden;
+}
+
+.category-tab::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: var(--red);
+    transition: 0.3s ease;
+    z-index: -1;
+}
+
+.category-tab:hover::before,
+.category-tab.active::before {
+    left: 0;
+}
+
+.category-tab:hover,
+.category-tab.active {
+    color: var(--white);
+    border-color: var(--red);
+    transform: translateY(-2px);
+}
+
+.category-tab.active {
+    background: var(--red);
+    border-color: var(--red);
+}
+
 .prompt-card {
     margin-bottom: 1.5rem;
     padding-left: 10px;
@@ -260,23 +309,23 @@ section {
     scrollbar-width: none;
 }
 
-.prompt-card:nth-child(1) {
+.prompt-card:nth-child(2) {
     transition-delay: 0.1s;
 }
 
-.prompt-card:nth-child(2) {
+.prompt-card:nth-child(3) {
     transition-delay: 0.2s;
 }
 
-.prompt-card:nth-child(3) {
+.prompt-card:nth-child(4) {
     transition-delay: 0.3s;
 }
 
-.prompt-card:nth-child(4) {
+.prompt-card:nth-child(5) {
     transition-delay: 0.4s;
 }
 
-.prompt-card:nth-child(5) {
+.prompt-card:nth-child(6) {
     transition-delay: 0.5s;
 }
 
@@ -322,16 +371,36 @@ section {
     margin: 2rem auto 0;
     padding: 0.75rem 1.5rem;
     background-color: var(--red);
-    color: var(--black);
+    color: var(--white);
     border: none;
     font-weight: 500;
     cursor: pointer;
     transition: var(--transition);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: 'Courier New', Courier, monospace;
+    position: relative;
+    overflow: hidden;
+}
+
+.show-more-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    transition: 0.3s ease;
+}
+
+.show-more-btn:hover::before {
+    left: 100%;
 }
 
 .show-more-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(255, 51, 85, 0.3);
+    box-shadow: 0 5px 15px rgba(206, 18, 4, 0.3);
 }
 
 .show-more-btn svg {
@@ -474,13 +543,16 @@ footer .container p {
     left: 50%;
     transform: translateX(-50%) translateY(100%);
     background-color: var(--red);
-    color: var(--black);
+    color: var(--white);
     padding: 0.75rem 1.5rem;
     font-size: 0.9rem;
     opacity: 0;
     transition: var(--transition);
     z-index: 100;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: 'Courier New', Courier, monospace;
 }
 
 .copy-notification.active {
@@ -489,6 +561,19 @@ footer .container p {
 }
 
 /* Responsive */
+@media (max-width: 768px) {
+    .category-tabs {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .category-tab {
+        width: 100%;
+        max-width: 200px;
+        text-align: center;
+    }
+}
+
 @media (min-width: 768px) {
     .prompts-container {
         grid-template-columns: repeat(2, 1fr);
@@ -496,5 +581,13 @@ footer .container p {
     
     .features-grid {
         grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .category-tabs {
+        justify-content: center;
+    }
+    
+    .category-tab {
+        min-width: 120px;
     }
 }
