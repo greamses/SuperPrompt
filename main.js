@@ -1,44 +1,76 @@
-const prompts = [
-{
-    id: 1,
-    title: "Multiple Choice Questions Generator",
-    content: "Generate 10 high-quality multiple choice questions for [subject/topic] at [grade level]. Each question should have:\n- A clear, concise stem\n- 4 plausible answer options (A-D)\n- One correct answer marked with an asterisk\n- A brief explanation for the correct answer\n\nFocus on key concepts and common misconceptions. Format the output in a way that's easy to copy into a quiz platform."
-},
-{
-    id: 2,
-    title: "Critical Thinking Questions",
-    content: "Create 5 theory-based critical thinking questions about [topic] for [grade level] students. Each question should:\n- Require analysis, evaluation, or synthesis of information\n- Be open-ended to encourage discussion\n- Connect to real-world applications\n- Include suggested assessment criteria\n\nStructure the questions to progressively build cognitive complexity from basic understanding to advanced application."
-},
-{
-    id: 3,
-    title: "Scheme of Work (Nigeria TKT)",
-    content: "Develop a comprehensive scheme of work for [subject] following the Nigerian TKT curriculum for [class/grade level] covering [duration, e.g., one term]. Include:\n- Weekly topics and subtopics\n- Learning objectives\n- Teaching methods and resources\n- Assessment strategies\n- Links to national educational standards\n\nOrganize it in a clear table format with columns for easy reference and adaptation."
-},
-{
-    id: 4,
-    title: "Classroom Management Techniques",
-    content: "Suggest 7 effective classroom management strategies for [grade level] that:\n- Promote positive behavior\n- Minimize disruptions\n- Encourage student engagement\n- Are culturally appropriate for Nigerian classrooms\n\nFor each technique, provide:\n1. A clear description\n2. Implementation steps\n3. Expected outcomes\n4. Potential challenges and solutions"
-},
-{
-    id: 5,
-    title: "Creative Learning Activity",
-    content: "Design an innovative learning activity for [subject/topic] that:\n- Incorporates hands-on, experiential learning\n- Appeals to diverse learning styles\n- Uses locally available materials\n- Can be adapted for different class sizes\n\nInclude:\n- Clear step-by-step instructions\n- Learning objectives\n- Assessment rubric\n- Extension ideas for advanced students\n- Safety considerations if applicable"
-},
-{
-    id: 6,
-    title: "Lesson Plan Generator",
-    content: "Create a detailed lesson plan for [subject/topic] for [grade level] students that includes:\n1. Clear learning objectives\n2. Engaging starter activity\n3. Main instructional content\n4. Student practice activities\n5. Assessment methods\n6. Differentiation strategies\n7. Homework assignment\n\nAlign with [curriculum standard] and include estimated timings for each section."
-},
-{
-    id: 7,
-    title: "Educational App Concept",
-    content: "Propose an innovative educational app concept for [subject/grade level] that:\n- Solves a specific learning challenge\n- Incorporates gamification elements\n- Includes progress tracking\n- Works offline for low-connectivity areas\n\nProvide:\n1. Target user persona\n2. Core features\n3. Unique value proposition\n4. Monetization strategy\n5. Technical requirements"
-},
-{
-    id: 8,
-    title: "Parent Engagement Strategies",
-    content: "Develop 5 effective strategies to engage parents in their child's learning for [grade level/subject] that:\n- Are culturally sensitive\n- Require minimal technology access\n- Provide measurable impact\n- Can be implemented with limited resources\n\nFor each strategy include:\n- Implementation steps\n- Required materials\n- Expected outcomes\n- Potential barriers and solutions"
-}];
+const promptCategories = {
+    music: [
+    {
+        id: 1,
+        title: "Song Lyrics Generator",
+        content: "Write original song lyrics for a [genre] song about [theme/topic]. Include:\n- Verse 1, Chorus, Verse 2, Chorus, Bridge, Final Chorus structure\n- Rhyme scheme that fits the genre\n- Emotional depth and storytelling\n- Memorable hook in the chorus\n- Age-appropriate content for [target audience]\n\nMake the lyrics authentic to the genre while being original and engaging."
+    },
+    {
+        id: 2,
+        title: "Music Theory Lesson",
+        content: "Create a comprehensive music theory lesson on [topic] for [skill level] students. Include:\n- Clear explanations of key concepts\n- Visual diagrams or notation examples\n- Practical exercises and examples\n- Audio references (describe what to listen for)\n- Progressive difficulty levels\n- Real-world applications in popular music\n\nMake it engaging and easy to understand for beginners."
+    },
+    {
+        id: 3,
+        title: "Playlist Curator",
+        content: "Curate a themed playlist of [number] songs for [occasion/mood/activity]. Provide:\n- Song title and artist for each track\n- Brief explanation of why each song fits the theme\n- Flow and progression notes\n- Total runtime\n- Alternative suggestions for different moods\n\nConsider tempo, energy levels, and emotional journey throughout the playlist."
+    }],
+    video: [
+    {
+        id: 4,
+        title: "Video Script Writer",
+        content: "Write a compelling video script for a [duration] minute [type] video about [topic]. Include:\n- Engaging hook in the first 10 seconds\n- Clear structure with smooth transitions\n- Visual cues and shot suggestions\n- Call-to-action\n- Estimated timestamps for each section\n- Tone that matches [target audience]\n\nOptimize for [platform] with attention-grabbing elements throughout."
+    },
+    {
+        id: 5,
+        title: "Educational Video Concept",
+        content: "Develop a concept for an educational video series on [subject] for [grade level]. Provide:\n- Episode breakdown and learning objectives\n- Visual storytelling techniques\n- Interactive elements and engagement strategies\n- Assessment integration ideas\n- Production requirements and budget considerations\n- Distribution and accessibility features\n\nAlign with curriculum standards and modern learning preferences."
+    },
+    {
+        id: 6,
+        title: "YouTube Channel Strategy",
+        content: "Create a comprehensive YouTube channel strategy for [niche/topic]. Include:\n- Channel positioning and unique value proposition\n- Content calendar for first 3 months\n- SEO optimization techniques\n- Thumbnail and title strategies\n- Community engagement plan\n- Monetization timeline and methods\n\nFocus on sustainable growth and authentic audience building."
+    }],
+    text: [
+    {
+        id: 7,
+        title: "Multiple Choice Questions Generator",
+        content: "Generate 10 high-quality multiple choice questions for [subject/topic] at [grade level]. Each question should have:\n- A clear, concise stem\n- 4 plausible answer options (A-D)\n- One correct answer marked with an asterisk\n- A brief explanation for the correct answer\n\nFocus on key concepts and common misconceptions. Format the output in a way that's easy to copy into a quiz platform."
+    },
+    {
+        id: 8,
+        title: "Creative Writing Prompt",
+        content: "Create an engaging creative writing prompt for [grade level] students that:\n- Sparks imagination and creativity\n- Includes specific character, setting, or conflict elements\n- Offers multiple story direction possibilities\n- Incorporates [literary device/technique]\n- Provides word count guidelines\n- Includes extension questions for deeper thinking\n\nMake it relatable to students' experiences while challenging their creativity."
+    },
+    {
+        id: 9,
+        title: "Business Copy Generator",
+        content: "Write compelling marketing copy for [product/service] targeting [audience]. Include:\n- Attention-grabbing headline\n- Problem-solution narrative\n- Unique selling propositions\n- Social proof elements\n- Strong call-to-action\n- Emotional triggers that resonate with audience\n\nOptimize for [platform/medium] with appropriate tone and length."
+    }],
+    picture: [
+    {
+        id: 10,
+        title: "Visual Art Assignment",
+        content: "Design a visual art project for [grade level] students exploring [theme/concept]. Include:\n- Clear artistic objectives and techniques to practice\n- Step-by-step creation process\n- Required materials (accessible/affordable options)\n- Inspiration examples and reference images\n- Assessment rubric for creativity and technique\n- Adaptation options for different skill levels\n\nEncourage personal expression while teaching fundamental art principles."
+    },
+    {
+        id: 11,
+        title: "Photo Challenge Creator",
+        content: "Create a photography challenge focusing on [technique/theme] suitable for [skill level]. Provide:\n- 7-day challenge with daily prompts\n- Technical tips for each shot\n- Composition guidelines\n- Equipment recommendations (budget-friendly options)\n- Hashtag strategy for social sharing\n- Critique and improvement suggestions\n\nBalance technical skill development with creative exploration."
+    },
+    {
+        id: 12,
+        title: "Infographic Designer",
+        content: "Plan an informative infographic about [topic] for [target audience]. Include:\n- Key data points and statistics to highlight\n- Visual hierarchy and flow design\n- Color scheme and typography suggestions\n- Icon and illustration recommendations\n- Layout structure for optimal readability\n- Call-to-action and source attribution\n\nMake complex information accessible and visually engaging."
+    }]
+};
+
+const categoryNames = {
+    music: "Music",
+    video: "Video",
+    text: "Text",
+    picture: "Picture"
+};
 
 const typingPhrases = [
     "Prompts at your fingertips...",
@@ -56,7 +88,13 @@ const parallaxImages = [
     "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=500"
 ];
 
-let showingAllPrompts = false;
+let activeCategory = 'text';
+let showingAllPrompts = {};
+
+// Initialize showing state for each category
+Object.keys(promptCategories).forEach(category => {
+    showingAllPrompts[category] = false;
+});
 
 // DOM elements
 const promptsContainer = document.getElementById('promptsContainer');
@@ -147,14 +185,14 @@ function typeWriter(text, element, baseSpeed = 80, callback) {
         if (i < text.length) {
             element.textContent += text.charAt(i);
             i++;
-            const naturalDelay = baseSpeed + Math.random() * 60; 
+            const naturalDelay = baseSpeed + Math.random() * 60;
             setTimeout(typeChar, naturalDelay);
         } else if (callback) {
             callback();
         }
     }
     
-    element.textContent = ''; 
+    element.textContent = '';
     typeChar();
 }
 
@@ -199,36 +237,72 @@ function isInViewport(element) {
     );
 }
 
-function handleScrollAnimations() {
-    const cards = document.querySelectorAll('.prompt-card, .feature-card');
+function createCategoryTabs() {
+    const tabsContainer = document.createElement('div');
+    tabsContainer.className = 'category-tabs';
     
-    cards.forEach(card => {
-        if (isInViewport(card)) {
-            card.classList.add('visible');
+    Object.keys(promptCategories).forEach(category => {
+        const tab = document.createElement('button');
+        tab.className = `category-tab ${category === activeCategory ? 'active' : ''}`;
+        tab.textContent = categoryNames[category];
+        tab.setAttribute('data-category', category);
+        
+        tab.addEventListener('click', () => {
+            switchCategory(category);
+        });
+        
+        tabsContainer.appendChild(tab);
+    });
+    
+    return tabsContainer;
+}
+
+function switchCategory(category) {
+    if (category === activeCategory) return;
+    
+    // Update active category
+    activeCategory = category;
+    
+    // Update tab states
+    document.querySelectorAll('.category-tab').forEach(tab => {
+        if (tab.getAttribute('data-category') === category) {
+            tab.classList.add('active');
+        } else {
+            tab.classList.remove('active');
         }
     });
+    
+    // Re-render prompts
+    renderPrompts();
 }
 
 function renderPrompts() {
     promptsContainer.innerHTML = '';
     
+    // Add category tabs
+    const tabsContainer = createCategoryTabs();
+    promptsContainer.appendChild(tabsContainer);
+    
+    // Get current category prompts
+    const currentPrompts = promptCategories[activeCategory];
+    
     // Always show first prompt
-    const firstPrompt = prompts[0];
+    const firstPrompt = currentPrompts[0];
     const firstCard = createPromptCard(firstPrompt);
     promptsContainer.appendChild(firstCard);
     
     // Add "Show More" button if there are more prompts
-    if (prompts.length > 1 && !showingAllPrompts) {
+    if (currentPrompts.length > 1 && !showingAllPrompts[activeCategory]) {
         const showMoreBtn = document.createElement('button');
         showMoreBtn.className = 'show-more-btn';
         showMoreBtn.textContent = 'Show More Prompts';
         
         showMoreBtn.addEventListener('click', () => {
-            showingAllPrompts = true;
+            showingAllPrompts[activeCategory] = true;
             showMoreBtn.remove();
             
             // Render all remaining prompts
-            prompts.slice(1).forEach(prompt => {
+            currentPrompts.slice(1).forEach(prompt => {
                 const card = createPromptCard(prompt);
                 promptsContainer.appendChild(card);
                 
@@ -240,9 +314,9 @@ function renderPrompts() {
         });
         
         promptsContainer.appendChild(showMoreBtn);
-    } else if (showingAllPrompts) {
+    } else if (showingAllPrompts[activeCategory]) {
         // Show all prompts if already expanded
-        prompts.forEach(prompt => {
+        currentPrompts.slice(1).forEach(prompt => {
             const card = createPromptCard(prompt);
             promptsContainer.appendChild(card);
             card.classList.add('visible');
@@ -256,7 +330,13 @@ function renderPrompts() {
 }
 
 function copyPrompt(id) {
-    const prompt = prompts.find(p => p.id == id);
+    // Find prompt in all categories
+    let prompt = null;
+    for (const category of Object.values(promptCategories)) {
+        prompt = category.find(p => p.id == id);
+        if (prompt) break;
+    }
+    
     if (!prompt) return;
     
     navigator.clipboard.writeText(prompt.content).then(() => {
@@ -310,7 +390,6 @@ function createPromptCard(prompt) {
     return card;
 }
 
-
 function handleScrollAnimations() {
     const cards = document.querySelectorAll('.prompt-card, .feature-card');
     
@@ -320,7 +399,6 @@ function handleScrollAnimations() {
         }
     });
 }
-
 
 function init() {
     renderPrompts();
